@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dress Tailors & Cloth House</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ec;
+  --white:#ffffff;
+  --red:#8b1a1a;
+  --red2:#a52020;
+  --dark:#1a1008;
+  --border:#ccc5b8;
+  --border2:#e5ddd2;
+  --muted:#7a6e60;
+  --light:#faf8f5;
+  --green:#1e7d3e;
+  --blue:#1a6fa0;
+  --radius:5px;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Crimson Pro',serif;background:var(--bg);color:var(--dark);min-height:100vh;direction:ltr;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;box-shadow:2px 0 10px rgba(0,0,0,.05);}
+.logo{padding:18px 16px 14px;border-bottom:2px solid var(--red);}
+.logo-en{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--red);line-height:1.1;}
+.logo-en span{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--dark);}
+.logo-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:13px;color:var(--red2);margin-top:5px;font-weight:700;direction:rtl;text-align:right;}
+.logo-info{margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:2;}
+.logo-info b{color:var(--red);}
+.logo-addr{font-size:10px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border2);line-height:1.7;}
+.nav{padding:10px 0;flex:1;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;border-left:3px solid transparent;}
+.nav-item:hover{color:var(--dark);background:#fdf7f2;}
+.nav-item.active{color:var(--red);border-left-color:var(--red);background:#fdf2f2;font-weight:700;}
+.nav-icon{width:16px;text-align:center;}
+.sb-stats{padding:12px 16px;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:10px;}
+.sst{display:flex;justify-content:space-between;padding:4px 0;color:var(--muted);border-bottom:1px dotted var(--border2);}
+.sst:last-child{border-bottom:none;}
+.sst b{color:var(--red);}
+
+/* MAIN */
+.main{margin-left:220px;min-height:100vh;}
+.topbar{background:var(--white);border-bottom:2px solid var(--red);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.topbar-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--red);font-weight:900;}
+.topbar-title span{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:8px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1.5px solid var(--border);background:var(--white);color:var(--dark);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.3px;cursor:pointer;border-radius:var(--radius);transition:all .2s;}
+.btn:hover{background:var(--light);}
+.btn-red{background:var(--red);border-color:var(--red);color:#fff;}
+.btn-red:hover{background:var(--red2);}
+.btn-sm{padding:5px 11px;font-size:10px;}
+.btn-outline{border-color:var(--red);color:var(--red);}
+.btn-outline:hover{background:#fdf2f2;}
+.btn-del{border-color:#c0392b;color:#c0392b;}
+.btn-del:hover{background:#fdf0f0;}
+.btn-green{border-color:var(--green);color:var(--green);}
+.btn-green:hover{background:#f0faf4;}
+
+/* PAGES */
+.page{display:none;padding:24px 28px;}
+.page.active{display:block;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.scard{background:var(--white);border:1px solid var(--border2);border-top:3px solid var(--red);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.scard-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.scard-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--red);}
+.scard-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* TABLE CARD */
+.tcard{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.thead-bar{padding:13px 18px;border-bottom:2px solid var(--red);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:var(--light);}
+.thead-title{font-family:'Playfair Display',serif;font-size:15px;color:var(--dark);font-weight:700;}
+.sinp{background:var(--white);border:1.5px solid var(--border);color:var(--dark);padding:7px 12px;font-family:'DM Mono',monospace;font-size:11px;border-radius:var(--radius);width:200px;outline:none;}
+.sinp:focus{border-color:var(--red);}
+.sinp::placeholder{color:var(--muted);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:#fdf5f5;}
+th{padding:10px 13px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);text-align:left;border-bottom:1px solid var(--border2);}
+td{padding:10px 13px;font-size:14px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#fdf8f5;}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;}
+.bgreen{background:#e8f8ee;color:var(--green);border:1px solid #a8d8b8;}
+.bgold{background:#fef9e7;color:#8b6914;border:1px solid #d4ac4a;}
+.bblue{background:#eaf4fb;color:var(--blue);border:1px solid #90c8e8;}
+.bred{background:#fdf0f0;color:var(--red);border:1px solid #e8a0a0;}
+.av{width:30px;height:30px;border-radius:50%;background:var(--red);display:inline-flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#fff;margin-right:8px;flex-shrink:0;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.pagination{display:flex;align-items:center;gap:6px;padding:10px 18px;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.pgbtn{background:var(--white);border:1px solid var(--border);color:var(--dark);padding:3px 9px;cursor:pointer;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;}
+.pgbtn:hover{border-color:var(--red);color:var(--red);}
+.pgbtn.on{background:var(--red);border-color:var(--red);color:#fff;}
+.empty{text-align:center;padding:48px;color:var(--muted);font-size:15px;}
+
+/* MODALS */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:999;align-items:center;justify-content:center;}
+.ov.open{display:flex;}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);width:740px;max-height:92vh;overflow-y:auto;animation:mIn .2s ease;box-shadow:0 20px 60px rgba(0,0,0,.12);}
+.mw{width:860px;}
+@keyframes mIn{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mhead{padding:15px 20px;border-bottom:2px solid var(--red);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:2;}
+.mhead-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--red);font-weight:700;}
+.mc{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
+.mc:hover{color:var(--red);}
+.mbody{padding:20px;}
+.mfoot{padding:13px 20px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:8px;}
+
+/* FORM */
+.fsec{margin-bottom:20px;}
+.ftitle{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:11px;padding-bottom:7px;border-bottom:2px solid var(--red);}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fg3{grid-template-columns:1fr 1fr 1fr;}
+.fg4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.fitem{display:flex;flex-direction:column;gap:5px;}
+.fitem.full{grid-column:1/-1;}
+.flabel{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+/* Urdu measurement labels */
+.ulabel{font-family:'Noto Nastaliq Urdu',serif;font-size:14px;color:var(--dark);direction:rtl;text-align:right;font-weight:600;}
+.ulabel small{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);direction:ltr;font-weight:400;}
+input[type=text],input[type=number],input[type=date],input[type=email],select,textarea{background:var(--light);border:1.5px solid var(--border);color:var(--dark);padding:8px 10px;font-family:'DM Mono',monospace;font-size:13px;border-radius:var(--radius);outline:none;transition:border-color .2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--red);}
+input::placeholder{color:var(--muted);}
+select option{background:#fff;}
+textarea{resize:vertical;min-height:55px;}
+
+/* CHECKBOXES */
+.chk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.chk-lbl{display:flex;align-items:center;gap:7px;cursor:pointer;padding:7px 9px;border:1px solid var(--border2);border-radius:4px;background:var(--light);transition:all .15s;}
+.chk-lbl:hover{border-color:var(--red);background:#fdf5f5;}
+.chk-lbl input[type=checkbox]{width:auto;background:none;border:none;padding:0;min-width:14px;accent-color:var(--red);}
+.chk-text{font-family:'Noto Nastaliq Urdu',serif;font-size:13px;color:var(--dark);direction:rtl;}
+
+/* MEASUREMENT BLOCKS (Urdu) */
+.meas-section{margin-bottom:18px;}
+.meas-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--red);}
+.meas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.meas-block{background:var(--light);border:1.5px solid var(--border2);border-radius:var(--radius);padding:10px 10px 8px;display:flex;flex-direction:column;gap:5px;}
+.meas-block:focus-within{border-color:var(--red);}
+.meas-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:14px;color:var(--dark);direction:rtl;text-align:right;font-weight:600;line-height:1.4;}
+.meas-hint{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.5px;}
+.meas-inp{background:var(--white);border:1.5px solid var(--border);color:var(--red);padding:6px 8px;font-family:'DM Mono',monospace;font-size:15px;font-weight:600;border-radius:4px;width:100%;outline:none;text-align:center;}
+.meas-inp:focus{border-color:var(--red);}
+.meas-inp::placeholder{color:var(--border);font-size:13px;}
+/* highlight special fields */
+.meas-block.special{border-color:#c9a84c;background:#fefcf5;}
+.meas-block.special .meas-ur{color:var(--red);}
+
+/* SLIP */
+.slip{background:#fff;max-width:680px;margin:0 auto;border:1px solid #bbb;font-family:'Noto Nastaliq Urdu',serif;}
+.slip-header{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 18px 10px;border-bottom:2px solid var(--red);}
+.slip-logo-en{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--red);line-height:1;}
+.slip-logo-en span{display:block;font-size:11px;font-weight:700;color:var(--dark);}
+.slip-rh{text-align:right;}
+.slip-name-ur{font-size:17px;color:var(--red);font-weight:700;}
+.slip-phones{font-family:'DM Mono',monospace;font-size:11px;color:var(--dark);margin-top:3px;}
+.slip-meta{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #ddd;}
+.slip-mc{padding:7px 14px;border-right:1px solid #ddd;text-align:center;}
+.slip-mc:last-child{border-right:none;}
+.slip-mlb{font-size:11px;color:var(--muted);display:block;}
+.slip-mv{font-family:'DM Mono',monospace;font-size:13px;color:var(--dark);font-weight:600;}
+.slip-name-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #ddd;}
+.slip-nc{padding:8px 14px;border-right:1px solid #ddd;}
+.slip-nc:last-child{border-right:none;}
+.slip-body{display:grid;grid-template-columns:1fr 150px;}
+.slip-left{padding:12px 18px;border-right:1px solid #ddd;}
+.slip-mrow{display:flex;align-items:flex-end;justify-content:flex-end;gap:12px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid #eee;}
+.slip-mrow:last-child{border-bottom:none;margin-bottom:0;}
+.slip-mlabel{font-size:16px;color:var(--dark);white-space:nowrap;direction:rtl;}
+.slip-mline{flex:1;border-bottom:1.5px solid #888;min-width:60px;}
+.slip-mval{font-family:'DM Mono',monospace;font-size:15px;color:var(--red);font-weight:700;min-width:38px;text-align:center;}
+.slip-right-col{padding:12px 12px 0;}
+.slip-chk{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:7px;font-size:13px;direction:rtl;}
+.slip-cbox{width:17px;height:17px;border:1.5px solid #888;border-radius:2px;display:flex;align-items:center;justify-content:center;background:#fff;flex-shrink:0;font-size:10px;}
+.slip-cbox.on{background:var(--red);border-color:var(--red);color:#fff;}
+.slip-suits{margin-top:8px;text-align:center;padding-bottom:10px;}
+.suits-lbl{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;display:block;margin-bottom:4px;}
+.suits-box{border:2px solid #888;width:70px;height:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:17px;color:var(--red);font-weight:700;}
+.slip-footer{padding:8px 18px;border-top:1px solid #ddd;background:#fafafa;text-align:center;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--red);color:#fff;padding:10px 16px;font-family:'DM Mono',monospace;font-size:11px;z-index:9999;border-radius:var(--radius);animation:tIn .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.15);}
+@keyframes tIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media print{.sidebar,.topbar,.btn,.ov,.pagination,.thead-bar .btn-group{display:none!important;}.main{margin-left:0!important;}.page{display:block!important;padding:0!important;}.slip{max-width:100%;border:none;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-en">Dress<span>Tailors &amp; Cloth House</span></div>
+    <div class="logo-ur">ڈریس ٹیلرز کلاتھ ہاؤس</div>
+    <div class="logo-info"><b>Sohail:</b> 0311-9467640<br><b>Tufail:</b> 0318-9070547</div>
+    <div class="logo-addr">Malak Plaza, Main Patak<br>Gujar Garhi, Mardan, KPK</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="goPage('dashboard',this)"><span class="nav-icon">◈</span> Dashboard</div>
+    <div class="nav-item" onclick="goPage('customers',this)"><span class="nav-icon">◉</span> Customers</div>
+    <div class="nav-item" onclick="goPage('slips',this)"><span class="nav-icon">◎</span> Measurement Slips</div>
+    <div class="nav-item" onclick="goPage('orders',this)"><span class="nav-icon">◐</span> Orders</div>
+  </nav>
+  <div class="sb-stats">
+    <div class="sst"><span>Customers</span><b id="sb-c">0</b></div>
+    <div class="sst"><span>Active Orders</span><b id="sb-o">0</b></div>
+    <div class="sst"><span>Ready</span><b id="sb-r">0</b></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">Dress Tailors &amp; Cloth House <span>— Management System</span></div>
+    <button class="btn btn-red" id="tbtn" onclick="openAddCust()">+ New Customer</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-row">
+      <div class="scard"><div class="scard-label">Total Customers</div><div class="scard-num" id="d-c">0</div><div class="scard-sub">All time</div></div>
+      <div class="scard"><div class="scard-label">Total Orders</div><div class="scard-num" id="d-o">0</div><div class="scard-sub">All time</div></div>
+      <div class="scard"><div class="scard-label">Pending / Active</div><div class="scard-num" id="d-p">0</div><div class="scard-sub">In progress</div></div>
+      <div class="scard"><div class="scard-label">Ready / Delivered</div><div class="scard-num" id="d-r">0</div><div class="scard-sub">Completed</div></div>
+    </div>
+    <div class="two-col">
+      <div class="tcard">
+        <div class="thead-bar"><div class="thead-title">Recent Customers</div></div>
+        <table><thead><tr><th>Name</th><th>Phone</th><th>Orders</th></tr></thead><tbody id="dash-c"></tbody></table>
+      </div>
+      <div class="tcard">
+        <div class="thead-bar"><div class="thead-title">Recent Orders</div></div>
+        <table><thead><tr><th>Customer</th><th>Item</th><th>Status</th></tr></thead><tbody id="dash-o"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS -->
+  <div class="page" id="page-customers">
+    <div class="tcard">
+      <div class="thead-bar">
+        <div class="thead-title">Customer Records</div>
+        <input class="sinp" placeholder="Search name or phone..." oninput="fC(this.value)">
+      </div>
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>City</th><th>Orders</th><th>Actions</th></tr></thead>
+        <tbody id="ctbl"></tbody>
+      </table>
+      <div class="pagination" id="cpag"></div>
+    </div>
+  </div>
+
+  <!-- SLIPS -->
+  <div class="page" id="page-slips">
+    <div class="tcard">
+      <div class="thead-bar">
+        <div class="thead-title">Measurement Slips</div>
+        <input class="sinp" placeholder="Search customer..." oninput="fS(this.value)">
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>لمبائی</th><th>تیرہ</th><th>بازو</th><th>چھاتی</th><th>شلوار</th><th>پانچہ</th><th>پٹی</th><th>فٹ کف</th><th>Actions</th></tr></thead>
+        <tbody id="stbl"></tbody>
+      </table>
+      <div class="pagination" id="spag"></div>
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="page" id="page-orders">
+    <div class="tcard">
+      <div class="thead-bar">
+        <div class="thead-title">Order Management</div>
+        <div style="display:flex;gap:8px;">
+          <input class="sinp" placeholder="Search orders..." oninput="fO(this.value)" style="width:170px;">
+          <button class="btn btn-red btn-sm" onclick="openAddOrder()">+ New Order</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Customer</th><th>Garment</th><th>Price</th><th>Advance</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="otbl"></tbody>
+      </table>
+      <div class="pagination" id="opag"></div>
+    </div>
+  </div>
+</main>
+
+<!-- ======== ADD/EDIT CUSTOMER MODAL ======== -->
+<div class="ov" id="ov-cust">
+  <div class="modal mw">
+    <div class="mhead"><div class="mhead-title" id="cm-title">New Customer</div><button class="mc" onclick="closeOv('ov-cust')">✕</button></div>
+    <div class="mbody">
+
+      <!-- Personal Info -->
+      <div class="fsec">
+        <div class="ftitle">Personal Information</div>
+        <div class="fg2">
+          <div class="fitem"><div class="flabel">Full Name *</div><input type="text" id="c-name" placeholder="e.g. Ahmed Khan"></div>
+          <div class="fitem"><div class="flabel">Mobile Number *</div><input type="text" id="c-phone" placeholder="0312-3456789"></div>
+          <div class="fitem"><div class="flabel">Father's / Husband's Name</div><input type="text" id="c-father"></div>
+          <div class="fitem"><div class="flabel">City</div><input type="text" id="c-city" placeholder="Mardan"></div>
+          <div class="fitem full"><div class="flabel">Address</div><textarea id="c-addr" rows="2"></textarea></div>
+        </div>
+      </div>
+
+      <!-- Upper Measurements -->
+      <div class="meas-section">
+        <div class="meas-section-title">Upper Body Measurements (inches — انچ)</div>
+        <div class="meas-grid">
+          <div class="meas-block">
+            <div class="meas-ur">لمبائی <small>Shirt Length</small></div>
+            <input class="meas-inp" type="number" id="m-lumbai" step="0.5" placeholder="44">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">تیرہ <small>Shoulder Width</small></div>
+            <input class="meas-inp" type="number" id="m-tira" step="0.5" placeholder="18">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">بازو <small>Sleeve Length</small></div>
+            <input class="meas-inp" type="number" id="m-bazu" step="0.5" placeholder="24">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">کالر <small>Neck / Collar</small></div>
+            <input class="meas-inp" type="number" id="m-collar" step="0.5" placeholder="15">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">چھاتی <small>Chest</small></div>
+            <input class="meas-inp" type="number" id="m-chati" step="0.5" placeholder="40">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">چوڑائی <small>Width / Waist</small></div>
+            <input class="meas-inp" type="number" id="m-chaurai" step="0.5" placeholder="20">
+          </div>
+          <!-- PATI - special field -->
+          <div class="meas-block special">
+            <div class="meas-ur">پٹی <small>Band Width</small></div>
+            <input class="meas-inp" type="number" id="m-pati" step="0.5" placeholder="2">
+          </div>
+          <!-- FIT CUFF - special field -->
+          <div class="meas-block special">
+            <div class="meas-ur">فٹ کف <small>Cuff Length</small></div>
+            <input class="meas-inp" type="number" id="m-fitcuff" step="0.5" placeholder="5">
+          </div>
+        </div>
+      </div>
+
+      <!-- Lower Measurements -->
+      <div class="meas-section">
+        <div class="meas-section-title">Lower Body Measurements (inches — انچ)</div>
+        <div class="meas-grid">
+          <div class="meas-block">
+            <div class="meas-ur">شلوار <small>Shalwar Length</small></div>
+            <input class="meas-inp" type="number" id="m-shalwar" step="0.5" placeholder="40">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">پانچہ <small>Leg Opening</small></div>
+            <input class="meas-inp" type="number" id="m-pancha" step="0.5" placeholder="9">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">شلوار گیرہ <small>Shalwar Waist</small></div>
+            <input class="meas-inp" type="number" id="m-gira" step="0.5" placeholder="38">
+          </div>
+          <div class="meas-block">
+            <div class="meas-ur">Suits <small>Suit Size</small></div>
+            <input class="meas-inp" type="number" id="m-suits" step="1" placeholder="40">
+          </div>
+        </div>
+      </div>
+
+      <!-- Style Options -->
+      <div class="meas-section">
+        <div class="meas-section-title">Style Options — اسٹائل</div>
+        <div class="chk-grid" id="chk-add"></div>
+      </div>
+
+      <div class="fitem"><div class="flabel">Notes / Special Instructions</div><textarea id="c-notes" rows="2" placeholder="Any special fitting notes..."></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeOv('ov-cust')">Cancel</button>
+      <button class="btn btn-red" onclick="saveCust()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLIP VIEW MODAL -->
+<div class="ov" id="ov-slip">
+  <div class="modal mw">
+    <div class="mhead"><div class="mhead-title" id="slip-title">Measurement Slip</div><button class="mc" onclick="closeOv('ov-slip')">✕</button></div>
+    <div class="mbody" id="slip-body"></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeOv('ov-slip')">Close</button>
+      <button class="btn btn-red btn-sm" onclick="window.print()">🖨 Print Slip</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MEASUREMENTS MODAL -->
+<div class="ov" id="ov-meas">
+  <div class="modal mw">
+    <div class="mhead"><div class="mhead-title" id="em-title">Edit Measurements</div><button class="mc" onclick="closeOv('ov-meas')">✕</button></div>
+    <div class="mbody">
+
+      <div class="meas-section">
+        <div class="meas-section-title">Upper Body (inches)</div>
+        <div class="meas-grid">
+          <div class="meas-block"><div class="meas-ur">لمبائی <small>Shirt Length</small></div><input class="meas-inp" type="number" id="em-lumbai" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">تیرہ <small>Shoulder Width</small></div><input class="meas-inp" type="number" id="em-tira" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">بازو <small>Sleeve Length</small></div><input class="meas-inp" type="number" id="em-bazu" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">کالر <small>Neck / Collar</small></div><input class="meas-inp" type="number" id="em-collar" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">چھاتی <small>Chest</small></div><input class="meas-inp" type="number" id="em-chati" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">چوڑائی <small>Width / Waist</small></div><input class="meas-inp" type="number" id="em-chaurai" step="0.5"></div>
+          <div class="meas-block special"><div class="meas-ur">پٹی <small>Band Width</small></div><input class="meas-inp" type="number" id="em-pati" step="0.5"></div>
+          <div class="meas-block special"><div class="meas-ur">فٹ کف <small>Cuff Length</small></div><input class="meas-inp" type="number" id="em-fitcuff" step="0.5"></div>
+        </div>
+      </div>
+
+      <div class="meas-section">
+        <div class="meas-section-title">Lower Body (inches)</div>
+        <div class="meas-grid">
+          <div class="meas-block"><div class="meas-ur">شلوار <small>Shalwar Length</small></div><input class="meas-inp" type="number" id="em-shalwar" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">پانچہ <small>Leg Opening</small></div><input class="meas-inp" type="number" id="em-pancha" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">شلوار گیرہ <small>Shalwar Waist</small></div><input class="meas-inp" type="number" id="em-gira" step="0.5"></div>
+          <div class="meas-block"><div class="meas-ur">Suits <small>Suit Size</small></div><input class="meas-inp" type="number" id="em-suits" step="1"></div>
+        </div>
+      </div>
+
+      <div class="meas-section">
+        <div class="meas-section-title">Style Options</div>
+        <div class="chk-grid" id="chk-edit"></div>
+      </div>
+
+      <div class="fitem"><div class="flabel">Notes</div><textarea id="em-notes" rows="2"></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeOv('ov-meas')">Cancel</button>
+      <button class="btn btn-red" onclick="saveMeas()">Save Measurements</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="ov" id="ov-order">
+  <div class="modal">
+    <div class="mhead"><div class="mhead-title" id="om-title">New Order</div><button class="mc" onclick="closeOv('ov-order')">✕</button></div>
+    <div class="mbody">
+      <div class="fsec">
+        <div class="ftitle">Order Details</div>
+        <div class="fg2">
+          <div class="fitem"><div class="flabel">Customer *</div><select id="o-cust"><option value="">— Select Customer —</option></select></div>
+          <div class="fitem"><div class="flabel">Garment Type</div>
+            <select id="o-item">
+              <option>Shalwar Kameez</option><option>Kurta</option><option>Sherwani</option>
+              <option>Waistcoat</option><option>Suit (2-piece)</option><option>Suit (3-piece)</option>
+              <option>Pant / Trouser</option><option>Shirt</option><option>Coat</option>
+              <option>Pant Coat</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fitem"><div class="flabel">Fabric Description</div><input type="text" id="o-fabric" placeholder="e.g. White Lawn, Navy Suiting"></div>
+          <div class="fitem"><div class="flabel">Price (PKR)</div><input type="number" id="o-price"></div>
+          <div class="fitem"><div class="flabel">Advance Paid (PKR)</div><input type="number" id="o-adv"></div>
+          <div class="fitem"><div class="flabel">Due / Return Date</div><input type="date" id="o-due"></div>
+          <div class="fitem"><div class="flabel">Status</div>
+            <select id="o-status">
+              <option value="Pending">Pending</option><option value="In Progress">In Progress</option>
+              <option value="Ready">Ready</option><option value="Delivered">Delivered</option>
+            </select>
+          </div>
+          <div class="fitem full"><div class="flabel">Special Instructions</div><textarea id="o-notes" rows="2" placeholder="Collar style, embroidery, buttons..."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeOv('ov-order')">Cancel</button>
+      <button class="btn btn-red" onclick="saveOrder()">Save Order</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ STYLE OPTIONS ============
+const STYLE_OPTIONS=[
+  {k:'upar-pati',    ur:'اوپر پٹی'},
+  {k:'chak-pati',    ur:'چاک پٹی کاج'},
+  {k:'fit-cuff',     ur:'فٹ کف'},
+  {k:'side-pocket',  ur:'سائیڈ پاکٹ'},
+  {k:'front-pocket', ur:'سامنے پاکٹ'},
+  {k:'collar',       ur:'کالر'},
+  {k:'ben-half',     ur:'بین / ہاف'},
+  {k:'choras-daman', ur:'چورس دامن'},
+  {k:'gol-daman',    ur:'گول دامن'},
+  {k:'chak-dhaga',   ur:'چک دھاگہ'},
+  {k:'shalwar-pocket',ur:'شلوار پاکٹ'},
+  {k:'rang-button',  ur:'رنگ بٹن'},
+  {k:'sada-asteen',  ur:'سادہ آستین'},
+];
+
+function buildChkGrid(id,pfx){
+  document.getElementById(id).innerHTML=STYLE_OPTIONS.map(o=>
+    `<label class="chk-lbl"><input type="checkbox" id="${pfx}${o.k}"><span class="chk-text">${o.ur}</span></label>`
+  ).join('');
+}
+buildChkGrid('chk-add','ca-');
+buildChkGrid('chk-edit','ce-');
+
+// ============ DATA ============
+let DB=JSON.parse(localStorage.getItem('dtf_v5')||'null');
+let eCId=null,eOId=null,eMId=null;
+let cPg=1,sPg=1,oPg=1,cF='',sF='',oF='';
+const PER=20;
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+function rStyle(){const s={};STYLE_OPTIONS.forEach(o=>s[o.k]=false);return s;}
+
+// Only 3 demo customers
+function genDemo(){
+  const now=Date.now();
+  const c1id=uid(),c2id=uid(),c3id=uid();
+  const customers=[
+    {id:c1id,serial:1,name:'Muhammad Sohail',phone:'0311-9467640',father:'',city:'Mardan',addr:'Malak Plaza, Gujar Garhi',notes:'',createdAt:new Date(now-5*86400000).toISOString(),
+      meas:{lumbai:44,tira:18,bazu:24,collar:15,chati:40,chaurai:20,pati:2,fitcuff:5,shalwar:40,pancha:9,gira:38,suits:40,notes:'',style:rStyle()}},
+    {id:c2id,serial:2,name:'Muhammad Tufail',phone:'0318-9070547',father:'',city:'Mardan',addr:'Gujar Garhi, Mardan',notes:'',createdAt:new Date(now-3*86400000).toISOString(),
+      meas:{lumbai:42,tira:17.5,bazu:23.5,collar:14.5,chati:38,chaurai:19,pati:2,fitcuff:4.5,shalwar:39,pancha:8.5,gira:36,suits:38,notes:'',style:rStyle()}},
+    {id:uid(),serial:3,name:'Ahmed Khan',phone:'0312-3456789',father:'Khalid Khan',city:'Swabi',addr:'',notes:'',createdAt:new Date(now-1*86400000).toISOString(),
+      meas:{lumbai:43,tira:17,bazu:24,collar:15,chati:39,chaurai:19.5,pati:2,fitcuff:5,shalwar:40,pancha:9,gira:37,suits:40,notes:'Prefers loose fit',style:rStyle()}},
+  ];
+  const orders=[
+    {id:uid(),cId:c1id,item:'Shalwar Kameez',fabric:'White Lawn',price:2500,adv:1500,due:'2026-04-05',status:'In Progress',notes:'',createdAt:new Date(now-2*86400000).toISOString()},
+    {id:uid(),cId:c2id,item:'Sherwani',fabric:'Navy Brocade',price:12000,adv:6000,due:'2026-04-15',status:'Pending',notes:'Wedding — gold buttons',createdAt:new Date(now-1*86400000).toISOString()},
+    {id:uid(),cId:c3id,item:'Kurta',fabric:'Beige Cotton',price:1800,adv:1800,due:'2026-03-30',status:'Ready',notes:'',createdAt:new Date(now).toISOString()},
+  ];
+  return{customers,orders};
+}
+
+if(!DB){DB=genDemo();localStorage.setItem('dtf_v5',JSON.stringify(DB));}
+
+function saveDB(){localStorage.setItem('dtf_v5',JSON.stringify(DB));updateSb();updateDash();}
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+
+// ============ NAV ============
+function goPage(p,el){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(el)el.classList.add('active');
+  const tbtn=document.getElementById('tbtn');
+  tbtn.textContent=p==='orders'?'+ New Order':'+ New Customer';
+  tbtn.onclick=p==='orders'?openAddOrder:openAddCust;
+  if(p==='customers'){cPg=1;renderC();}
+  if(p==='slips'){sPg=1;renderS();}
+  if(p==='orders'){oPg=1;fillOCust();renderO();}
+}
+
+// ============ CUSTOMER CRUD ============
+const MEAS_KEYS=['lumbai','tira','bazu','collar','chati','chaurai','pati','fitcuff','shalwar','pancha','gira','suits'];
+
+function clearCustForm(){
+  ['c-name','c-phone','c-father','c-city','c-addr','c-notes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  MEAS_KEYS.forEach(k=>{const e=document.getElementById('m-'+k);if(e)e.value='';});
+  STYLE_OPTIONS.forEach(o=>{const e=document.getElementById('ca-'+o.k);if(e)e.checked=false;});
+}
+
+function openAddCust(){eCId=null;document.getElementById('cm-title').textContent='New Customer';clearCustForm();openOv('ov-cust');}
+
+function getMeasFromForm(kpfx,spfx){
+  const m={notes:document.getElementById('c-notes')?document.getElementById('c-notes').value:''};
+  MEAS_KEYS.forEach(k=>{const e=document.getElementById(kpfx+k);m[k]=e?e.value:'';});
+  const style={};STYLE_OPTIONS.forEach(o=>{const e=document.getElementById(spfx+o.k);style[o.k]=e?e.checked:false;});
+  m.style=style;
+  return m;
+}
+
+function saveCust(){
+  const name=document.getElementById('c-name').value.trim(),phone=document.getElementById('c-phone').value.trim();
+  if(!name||!phone){toast('Name and phone are required.');return;}
+  const meas=getMeasFromForm('m-','ca-');
+  meas.notes=document.getElementById('c-notes').value;
+  if(eCId){
+    const i=DB.customers.findIndex(c=>c.id===eCId);
+    DB.customers[i]={...DB.customers[i],name,phone,father:document.getElementById('c-father').value.trim(),city:document.getElementById('c-city').value.trim(),addr:document.getElementById('c-addr').value.trim(),meas};
+    toast('Customer updated successfully.');
+  }else{
+    DB.customers.push({id:uid(),serial:DB.customers.length+1,name,phone,father:document.getElementById('c-father').value.trim(),city:document.getElementById('c-city').value.trim(),addr:document.getElementById('c-addr').value.trim(),createdAt:new Date().toISOString(),meas});
+    toast('Customer saved successfully.');
+  }
+  saveDB();closeOv('ov-cust');renderC();renderS();
+}
+
+function editCust(id){
+  const c=DB.customers.find(c=>c.id===id);if(!c)return;
+  eCId=id;document.getElementById('cm-title').textContent='Edit: '+c.name;
+  document.getElementById('c-name').value=c.name;
+  document.getElementById('c-phone').value=c.phone;
+  document.getElementById('c-father').value=c.father||'';
+  document.getElementById('c-city').value=c.city||'';
+  document.getElementById('c-addr').value=c.addr||'';
+  const m=c.meas||{};
+  MEAS_KEYS.forEach(k=>{const e=document.getElementById('m-'+k);if(e)e.value=m[k]||'';});
+  document.getElementById('c-notes').value=m.notes||'';
+  const st=m.style||{};STYLE_OPTIONS.forEach(o=>{const e=document.getElementById('ca-'+o.k);if(e)e.checked=!!st[o.k];});
+  openOv('ov-cust');
+}
+
+function delCust(id){
+  if(!confirm('Delete this customer and all their orders?'))return;
+  DB.customers=DB.customers.filter(c=>c.id!==id);
+  DB.orders=DB.orders.filter(o=>o.cId!==id);
+  saveDB();renderC();renderS();renderO();toast('Customer deleted.');
+}
+
+function renderC(f){
+  if(f!==undefined)cF=f;
+  const tbody=document.getElementById('ctbl');
+  let list=DB.customers.filter(c=>!cF||c.name.toLowerCase().includes(cF.toLowerCase())||c.phone.includes(cF));
+  const pages=Math.ceil(list.length/PER)||1;if(cPg>pages)cPg=1;
+  const sl=list.slice((cPg-1)*PER,cPg*PER);
+  if(!sl.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No customers found.</div></td></tr>';pgRender('cpag',pages,cPg,'cPg','renderC');return;}
+  tbody.innerHTML=sl.map((c,i)=>{
+    const oc=DB.orders.filter(o=>o.cId===c.id).length;
+    const init=c.name.split(' ').filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">${(cPg-1)*PER+i+1}</td>
+      <td><div style="display:flex;align-items:center;"><span class="av">${init}</span>${c.name}</div></td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;">${c.phone}</td>
+      <td>${c.city||'—'}</td>
+      <td><span class="badge bgold">${oc}</span></td>
+      <td><div style="display:flex;gap:5px;">
+        <button class="btn btn-sm btn-outline" onclick="showSlip('${c.id}')">Slip</button>
+        <button class="btn btn-sm btn-green" onclick="openME('${c.id}')">Meas.</button>
+        <button class="btn btn-sm" onclick="editCust('${c.id}')">Edit</button>
+        <button class="btn btn-sm btn-del" onclick="delCust('${c.id}')">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  pgRender('cpag',pages,cPg,'cPg','renderC');
+}
+function fC(v){cPg=1;renderC(v);}
+
+// ============ SLIP ============
+function showSlip(id){
+  const c=DB.customers.find(c=>c.id===id);if(!c)return;
+  const m=c.meas||{},st=m.style||{};
+  const lastO=[...DB.orders.filter(o=>o.cId===id)].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0]||{};
+  document.getElementById('slip-title').textContent='Measurement Slip — '+c.name;
+  const measRows=[
+    ['لمبائی',m.lumbai],['تیرہ',m.tira],['بازو',m.bazu],['کالر',m.collar],
+    ['چھاتی',m.chati],['چوڑائی',m.chaurai],['پٹی',m.pati],['فٹ کف',m.fitcuff],
+    ['شلوار',m.shalwar],['پانچہ',m.pancha],['شلوار گیرہ',m.gira]
+  ];
+  const measHtml=measRows.map(r=>`
+    <div class="slip-mrow">
+      <span class="slip-mlabel">${r[0]}</span>
+      <div class="slip-mline"></div>
+      <span class="slip-mval">${r[1]||''}</span>
+    </div>`).join('');
+  const chkHtml=STYLE_OPTIONS.map(o=>`
+    <div class="slip-chk">
+      <span>${o.ur}</span>
+      <div class="slip-cbox ${st[o.k]?'on':''}">${st[o.k]?'✓':''}</div>
+    </div>`).join('');
+  document.getElementById('slip-body').innerHTML=`
+  <div class="slip">
+    <div class="slip-header">
+      <div>
+        <div class="slip-logo-en">Dress<span>Tailors &amp; Cloth House</span></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace;">Malak Plaza, Main Patak, Gujar Garhi, Mardan, KPK</div>
+      </div>
+      <div class="slip-rh">
+        <div class="slip-name-ur" style="font-family:'Noto Nastaliq Urdu',serif;">ڈریس ٹیلرز کلاتھ ہاؤس</div>
+        <div class="slip-phones">Sohail: 0311-9467640 &nbsp;|&nbsp; Tufail: 0318-9070547</div>
+      </div>
+    </div>
+    <div class="slip-meta">
+      <div class="slip-mc"><span class="slip-mlb" style="font-family:'Noto Nastaliq Urdu',serif;">سیریل نمبر</span><span class="slip-mv">${c.serial||'—'}</span></div>
+      <div class="slip-mc"><span class="slip-mlb" style="font-family:'Noto Nastaliq Urdu',serif;">تاریخ</span><span class="slip-mv">${new Date(c.createdAt).toLocaleDateString('en-PK')}</span></div>
+      <div class="slip-mc"><span class="slip-mlb" style="font-family:'Noto Nastaliq Urdu',serif;">تاریخ واپسی</span><span class="slip-mv">${lastO.due||'—'}</span></div>
+    </div>
+    <div class="slip-name-row">
+      <div class="slip-nc">
+        <span style="font-size:11px;color:var(--muted);font-family:'Noto Nastaliq Urdu',serif;direction:rtl;display:block;text-align:right;">نام</span>
+        <span style="font-size:18px;font-weight:700;font-family:'Noto Nastaliq Urdu',serif;direction:rtl;display:block;text-align:right;">${c.name}</span>
+      </div>
+      <div class="slip-nc">
+        <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">Mobile Number</span>
+        <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;margin-top:2px;">${c.phone}</div>
+      </div>
+    </div>
+    <div class="slip-body">
+      <div class="slip-left" style="font-family:'Noto Nastaliq Urdu',serif;">${measHtml}</div>
+      <div class="slip-right-col" style="font-family:'Noto Nastaliq Urdu',serif;">
+        ${chkHtml}
+        <div class="slip-suits">
+          <span class="suits-lbl">Suits</span>
+          <div class="suits-box">${m.suits||''}</div>
+        </div>
+      </div>
+    </div>
+    <div class="slip-footer">Dress Tailors &amp; Cloth House — Mardan, KPK${m.notes?' | Note: '+m.notes:''}</div>
+  </div>`;
+  openOv('ov-slip');
+}
+
+function renderS(f){
+  if(f!==undefined)sF=f;
+  const tbody=document.getElementById('stbl');
+  let list=DB.customers.filter(c=>!sF||c.name.toLowerCase().includes(sF.toLowerCase()));
+  const pages=Math.ceil(list.length/PER)||1;if(sPg>pages)sPg=1;
+  const sl=list.slice((sPg-1)*PER,sPg*PER);
+  if(!sl.length){tbody.innerHTML='<tr><td colspan="10"><div class="empty">No records found.</div></td></tr>';return;}
+  tbody.innerHTML=sl.map(c=>{
+    const m=c.meas||{};
+    const init=c.name.split(' ').filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<tr>
+      <td><div style="display:flex;align-items:center;"><span class="av">${init}</span>${c.name}</div></td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;">${m.lumbai?m.lumbai+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;">${m.tira?m.tira+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;">${m.bazu?m.bazu+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;">${m.chati?m.chati+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;color:var(--red);font-weight:700;">${m.shalwar?m.shalwar+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;color:var(--red);font-weight:700;">${m.pancha?m.pancha+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;font-weight:700;color:#8b6914;">${m.pati?m.pati+'"':'—'}</td>
+      <td style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:14px;font-weight:700;color:#8b6914;">${m.fitcuff?m.fitcuff+'"':'—'}</td>
+      <td><div style="display:flex;gap:5px;">
+        <button class="btn btn-sm btn-outline" onclick="showSlip('${c.id}')">Slip</button>
+        <button class="btn btn-sm btn-green" onclick="openME('${c.id}')">✏ Edit</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  pgRender('spag',pages,sPg,'sPg','renderS');
+}
+function fS(v){sPg=1;renderS(v);}
+
+// ============ MEASUREMENT EDIT ============
+function openME(id){
+  const c=DB.customers.find(c=>c.id===id);if(!c)return;
+  eMId=id;document.getElementById('em-title').textContent='Edit Measurements — '+c.name;
+  const m=c.meas||{};
+  MEAS_KEYS.forEach(k=>{const e=document.getElementById('em-'+k);if(e)e.value=m[k]||'';});
+  document.getElementById('em-notes').value=m.notes||'';
+  const st=m.style||{};STYLE_OPTIONS.forEach(o=>{const e=document.getElementById('ce-'+o.k);if(e)e.checked=!!st[o.k];});
+  openOv('ov-meas');
+}
+function saveMeas(){
+  const i=DB.customers.findIndex(c=>c.id===eMId);if(i<0)return;
+  const style={};STYLE_OPTIONS.forEach(o=>{const e=document.getElementById('ce-'+o.k);style[o.k]=e?e.checked:false;});
+  const meas={};MEAS_KEYS.forEach(k=>{meas[k]=document.getElementById('em-'+k).value;});
+  meas.notes=document.getElementById('em-notes').value;
+  meas.style=style;
+  DB.customers[i].meas=meas;
+  saveDB();closeOv('ov-meas');renderS();renderC();toast('Measurements saved!');
+}
+
+// ============ ORDERS ============
+const SL={'Pending':'Pending','In Progress':'In Progress','Ready':'Ready','Delivered':'Delivered'};
+const SC={'Pending':'bgold','In Progress':'bblue','Ready':'bgreen','Delivered':'bred'};
+function badge(s){return `<span class="badge ${SC[s]||'bgold'}">${s}</span>`;}
+
+function fillOCust(){
+  const sel=document.getElementById('o-cust'),cur=sel.value;
+  sel.innerHTML='<option value="">— Select Customer —</option>';
+  DB.customers.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name+' — '+c.phone;sel.appendChild(o);});
+  sel.value=cur;
+}
+function openAddOrder(){
+  eOId=null;document.getElementById('om-title').textContent='New Order';
+  ['o-fabric','o-notes','o-price','o-adv','o-due'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('o-status').value='Pending';
+  document.getElementById('o-cust').value='';
+  fillOCust();openOv('ov-order');
+}
+function saveOrder(){
+  const cId=document.getElementById('o-cust').value;if(!cId){toast('Please select a customer.');return;}
+  const order={id:eOId||uid(),cId,item:document.getElementById('o-item').value,fabric:document.getElementById('o-fabric').value.trim(),price:document.getElementById('o-price').value,adv:document.getElementById('o-adv').value,due:document.getElementById('o-due').value,status:document.getElementById('o-status').value,notes:document.getElementById('o-notes').value,createdAt:eOId?(DB.orders.find(o=>o.id===eOId)||{}).createdAt:new Date().toISOString()};
+  if(eOId){const i=DB.orders.findIndex(o=>o.id===eOId);DB.orders[i]=order;toast('Order updated.');}
+  else{DB.orders.push(order);toast('Order saved.');}
+  saveDB();closeOv('ov-order');renderO();
+}
+function editOrder(id){
+  const o=DB.orders.find(o=>o.id===id);if(!o)return;
+  eOId=id;document.getElementById('om-title').textContent='Edit Order';
+  fillOCust();
+  document.getElementById('o-cust').value=o.cId;
+  document.getElementById('o-item').value=o.item;
+  document.getElementById('o-fabric').value=o.fabric||'';
+  document.getElementById('o-price').value=o.price||'';
+  document.getElementById('o-adv').value=o.adv||'';
+  document.getElementById('o-due').value=o.due||'';
+  document.getElementById('o-status').value=o.status||'Pending';
+  document.getElementById('o-notes').value=o.notes||'';
+  openOv('ov-order');
+}
+function delOrder(id){if(!confirm('Delete this order?'))return;DB.orders=DB.orders.filter(o=>o.id!==id);saveDB();renderO();toast('Order deleted.');}
+function updSt(id,status){const o=DB.orders.find(o=>o.id===id);if(o){o.status=status;saveDB();renderO();toast('Status updated.');}}
+
+function renderO(f){
+  if(f!==undefined)oF=f;
+  const tbody=document.getElementById('otbl');
+  let list=DB.orders.filter(o=>{if(!oF)return true;const c=DB.customers.find(c=>c.id===o.cId);return(c&&c.name.toLowerCase().includes(oF.toLowerCase()))||o.item.toLowerCase().includes(oF.toLowerCase());}).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const pages=Math.ceil(list.length/PER)||1;if(oPg>pages)oPg=1;
+  const sl=list.slice((oPg-1)*PER,oPg*PER);
+  if(!sl.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty">No orders found.</div></td></tr>';pgRender('opag',pages,oPg,'oPg','renderO');return;}
+  tbody.innerHTML=sl.map(o=>{
+    const c=DB.customers.find(c=>c.id===o.cId);
+    const bal=o.price&&o.adv?Number(o.price)-Number(o.adv):null;
+    return `<tr>
+      <td>${c?c.name:'—'}</td>
+      <td>${o.item}${o.fabric?`<br><small style="color:var(--muted);font-size:11px;">${o.fabric}</small>`:''}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;">${o.price?'Rs '+Number(o.price).toLocaleString():'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;">${o.adv?'Rs '+Number(o.adv).toLocaleString():'—'}${bal!==null?`<br><span style="color:${bal>0?'#c0392b':'var(--green)'}">Bal: Rs ${Number(bal).toLocaleString()}</span>`:''}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;">${o.due||'—'}</td>
+      <td>${badge(o.status)}</td>
+      <td><div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <select onchange="updSt('${o.id}',this.value)" style="padding:3px 7px;font-size:10px;width:auto;font-family:'DM Mono',monospace;">
+          ${['Pending','In Progress','Ready','Delivered'].map(s=>`<option value="${s}" ${s===o.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn btn-sm" onclick="editOrder('${o.id}')">Edit</button>
+        <button class="btn btn-sm btn-del" onclick="delOrder('${o.id}')">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  pgRender('opag',pages,oPg,'oPg','renderO');
+}
+function fO(v){oPg=1;renderO(v);}
+
+// ============ PAGINATION ============
+function pgRender(elId,pages,cur,pVar,fn){
+  const el=document.getElementById(elId);if(!el)return;
+  if(pages<=1){el.innerHTML='';return;}
+  let h=`<span>Page ${cur} of ${pages}</span>&nbsp;`;
+  h+=`<button class="pgbtn" onclick="window.${pVar}=Math.max(1,window.${pVar}-1);${fn}()">‹ Prev</button>`;
+  const s=Math.max(1,cur-2),e2=Math.min(pages,s+4);
+  for(let p=s;p<=e2;p++)h+=`<button class="pgbtn ${p===cur?'on':''}" onclick="window.${pVar}=${p};${fn}()">${p}</button>`;
+  h+=`<button class="pgbtn" onclick="window.${pVar}=Math.min(${pages},window.${pVar}+1);${fn}()">Next ›</button>`;
+  el.innerHTML=h;
+}
+window.cPg=1;window.sPg=1;window.oPg=1;
+
+// ============ DASHBOARD ============
+function updateDash(){
+  document.getElementById('d-c').textContent=DB.customers.length;
+  document.getElementById('d-o').textContent=DB.orders.length;
+  document.getElementById('d-p').textContent=DB.orders.filter(o=>o.status==='Pending'||o.status==='In Progress').length;
+  document.getElementById('d-r').textContent=DB.orders.filter(o=>o.status==='Ready'||o.status==='Delivered').length;
+  document.getElementById('dash-c').innerHTML=[...DB.customers].slice(-6).reverse().map(c=>`<tr><td>${c.name}</td><td style="font-family:'DM Mono',monospace;font-size:11px;">${c.phone}</td><td><span class="badge bgold">${DB.orders.filter(o=>o.cId===c.id).length}</span></td></tr>`).join('');
+  document.getElementById('dash-o').innerHTML=[...DB.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,6).map(o=>{const c=DB.customers.find(c=>c.id===o.cId);return`<tr><td>${c?c.name:'—'}</td><td>${o.item}</td><td>${badge(o.status)}</td></tr>`;}).join('');
+}
+function updateSb(){
+  document.getElementById('sb-c').textContent=DB.customers.length;
+  document.getElementById('sb-o').textContent=DB.orders.filter(o=>o.status==='Pending'||o.status==='In Progress').length;
+  document.getElementById('sb-r').textContent=DB.orders.filter(o=>o.status==='Ready').length;
+}
+function toast(msg){const e=document.createElement('div');e.className='toast';e.textContent=msg;document.body.appendChild(e);setTimeout(()=>e.remove(),2600);}
+
+// INIT
+updateDash();updateSb();
+</script>
+</body>
+</html>
